@@ -72,38 +72,63 @@ namespace PeerLearn.Data
             return user;
         }
 
-        public void CreateUser(User user)
+        public bool CreateUser(User user)
         {
             using(var session = _factory.OpenSession())
             {
                 using(var transaction = session.BeginTransaction())
                 {
-                    session.Save(user);
-                    transaction.Commit();
+                    try
+                    {
+                        session.Save(user);
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch(Exception ex)
+                    {
+                        var debug = ex;
+                        return false;
+                    }
                 }
             }
         }
 
-        public void UpdateUser(User user)
+        public bool UpdateUser(User user)
         {
             using (var session = _factory.OpenSession())
             {
                 using (var transaction = session.BeginTransaction())
                 {
-                    session.Update(user);
-                    transaction.Commit();
+                    try
+                    {
+                        session.Update(user);
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
                 }
             }
         }
 
-        public void DeleteUser(User user)
+        public bool DeleteUser(User user)
         {
             using (var session = _factory.OpenSession())
             {
                 using (var transaction = session.BeginTransaction())
                 {
-                    session.Delete(user);
-                    transaction.Commit();
+                    try
+                    {
+                        session.Delete(user);
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
                 }
             }
         }
@@ -238,6 +263,25 @@ namespace PeerLearn.Data
             }
 
             return user;
+        }
+
+        public IList<Role> GetAllRoles()
+        {
+            IList<Role> roles = null;
+
+            using (var session = _factory.OpenSession())
+            {
+                using (var transaction = session.BeginTransaction())
+                {
+                    roles = session.CreateCriteria(typeof(Role)).List<Role>();
+                    foreach(var role in roles)
+                    {
+                        NHibernateUtil.Initialize(role.UsersInRole);
+                    }
+                }
+            }
+
+            return roles;
         }
 
         #endregion

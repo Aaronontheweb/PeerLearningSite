@@ -24,5 +24,10 @@ namespace PeerLearn.Web.Controllers
             return View(_eventService.GetUpcomingEvents(DateTime.Now));
         }
 
+        public ActionResult About()
+        {
+            return View();
+        }
+
     }
 }

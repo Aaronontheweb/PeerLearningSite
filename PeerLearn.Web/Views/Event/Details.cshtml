@@ -1,0 +1,25 @@
+﻿@model PeerLearn.Data.Entities.Event
+
+@{
+    View.Title = "Los Angeles .NET Peer Learning Group: " + Model.EventName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.EventName</h2>
+
+    <span><b>@Model.EventBeginDate - @Model.EventEndDate</b></span>
+    <br /><span class="registration_notice">Registration begins @String.Format("{0:g}", Model.RegistrationOpenDate)</span>
+    <p>
+        @Model.EventDescription
+    </p>
+    <p>
+        <b>Location</b>
+        @Model.Address.StreetAddress<br />
+        @Model.Address.StreetAddress2<br />
+        @Model.Address.City, @Model.Address.State, @Model.Address.PostalCode<br />
+    </p>
+    <p><b>Attendees: @Model.Attendees.Count</b></p>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id=Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -12,9 +12,9 @@ namespace PeerLearn.Data
         User GetUserById(int id);
         User GetUserByName(string username);
         User GetUserByEmail(string email);
-        void CreateUser(User user);
-        void UpdateUser(User user);
-        void DeleteUser(User user);
+        bool CreateUser(User user);
+        bool UpdateUser(User user);
+        bool DeleteUser(User user);
         #endregion
 
         #region Event methods
@@ -32,6 +32,7 @@ namespace PeerLearn.Data
         IList<Event> GetAllEvents();
         IList<User> SearchUsers(string query);
         IList<User> GetAllUsers();
+        IList<Role> GetAllRoles();
 
         #endregion
     }

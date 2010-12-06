@@ -24,6 +24,11 @@ namespace PeerLearn.Web.Service
             return ConvertDalEventsToEventList(events);
         }
 
+        public Event GetEvent(int eventId)
+        {
+            return _repository.GetEventById(eventId);
+        }
+
         protected static IList<EventListItem> ConvertDalEventsToEventList(IEnumerable<Event> events)
         {
             return events.Select(ConvertDalEventToEventListItem).ToList();

@@ -30,6 +30,14 @@ namespace PeerLearn.Data.Entities
         virtual public IList<Event> EventsOrganized { get; set; }
         virtual public IList<Event> EventsPresented { get; set; }
 
+        public User()
+        {
+            Roles = new List<Role>();
+            EventsAttended = new List<Event>();
+            EventsOrganized = new List<Event>();
+            EventsPresented = new List<Event>();
+        }
+
         virtual public void AddRole(Role role)
         {
             role.UsersInRole.Add(this);
