@@ -43,9 +43,6 @@
     <Reference Include="Iesi.Collections">
       <HintPath>..\packages\Iesi.Collections.1.0.1\lib\Iesi.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="NHibernate">
       <HintPath>..\packages\NHibernate.Core.3.0.0.2001\lib\NHibernate.dll</HintPath>
     </Reference>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using PeerLearn.Web.Helpers;
 
 namespace PeerLearn.Web
 {
@@ -21,11 +22,9 @@ namespace PeerLearn.Web
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapRoute(
-                "Default", // Route name
-                "{controller}/{action}/{id}", // URL with parameters
-                new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
-            );
+            routes.Add(new LowerCaseRoute("{controller}/{action}/{id}",  
+                new RouteValueDictionary(new { controller = "Home", action = "Index", id = "" }),  
+                new MvcRouteHandler())); 
 
         }
 

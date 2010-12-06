@@ -1,0 +1,19 @@
+﻿@model System.Collections.Generic.IList<PeerLearn.Web.Models.EventListItem>
+
+@{
+    View.Title = "Los Angeles.NET Peer Learning Group";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@View.Title</h1>
+<h2>Upcoming Events</h2>
+
+@foreach (var eventItem in Model)
+{
+    <h3>@Html.ActionLink(eventItem.EventName, "Details", "Event", new { id = eventItem.EventId }, new { })</h3>
+    <p>
+        <b>@eventItem.EventBeginTime - @eventItem.EventEndTime</b><br /><br />
+        @eventItem.EventDescription
+    </p>
+}
+
