@@ -95,7 +95,8 @@ namespace PeerLearn.Web.Controllers
                     return View(user);
                 }
 
-                //Login successful!
+                //Login successful!;
+                _authentication.SignIn(user.UserName, true);
                 return RedirectToAction("Index", "Home");
             }
 

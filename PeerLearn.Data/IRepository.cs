@@ -19,9 +19,10 @@ namespace PeerLearn.Data
 
         #region Event methods
         Event GetEventById(int id);
-        void CreateEvent(Event newEvent);
-        void UpdateEvent(Event updatedEvent);
-        void DeleteEvent(Event deletedEvent);
+        Event GetEventByName(string eventName);
+        bool CreateEvent(Event newEvent);
+        bool UpdateEvent(Event updatedEvent);
+        bool DeleteEvent(Event deletedEvent);
         #endregion
 
         #region Collection methods
@@ -35,5 +36,7 @@ namespace PeerLearn.Data
         IList<Role> GetAllRoles();
 
         #endregion
+
+        
     }
 }

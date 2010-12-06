@@ -10,23 +10,28 @@ namespace PeerLearn.Web.Service
 {
     public class EventService : IEventService
     {
-        protected IRepository _repository;
+        public IRepository Repository { get; private set;}
 
         public EventService(IRepository repository)
         {
-            _repository = repository;
+            Repository = repository;
         }
 
         public IList<EventListItem> GetUpcomingEvents(DateTime targetTime)
         {
-            var events = _repository.GetUpcomingEvents(targetTime);
+            var events = Repository.GetUpcomingEvents(targetTime);
 
             return ConvertDalEventsToEventList(events);
         }
 
         public Event GetEvent(int eventId)
         {
-            return _repository.GetEventById(eventId);
+            return Repository.GetEventById(eventId);
+        }
+
+        public Event GetEvent(string eventName)
+        {
+            return Repository.GetEventByName(eventName);
         }
 
         protected static IList<EventListItem> ConvertDalEventsToEventList(IEnumerable<Event> events)

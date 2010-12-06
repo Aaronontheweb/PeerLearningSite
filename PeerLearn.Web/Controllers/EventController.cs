@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using PeerLearn.Data.Entities;
+using PeerLearn.Web.Models;
 using PeerLearn.Web.Service;
 
 namespace PeerLearn.Web.Controllers
@@ -45,6 +47,7 @@ namespace PeerLearn.Web.Controllers
         //
         // GET: /Event/Create
 
+        [Authorize]
         public ActionResult Create()
         {
             return View();
@@ -52,72 +55,79 @@ namespace PeerLearn.Web.Controllers
 
         //
         // POST: /Event/Create
-
+        [Authorize]
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(NewEvent newEvent)
         {
             try
             {
-                // TODO: Add insert logic here
+                if(ModelState.IsValid)
+                {
+                    //Should probably refactor this into a static method in IEventService /shrug
+                    var insertedEvent = new Event
+                                            {
+                                                EventName = Server.HtmlEncode(newEvent.EventName),
+                                                EventDescription = Server.HtmlEncode(newEvent.EventDescription),
+                                                EventBeginDate = newEvent.EventBeginTime,
+                                                EventEndDate = newEvent.EventEndTime,
+                                                RegistrationOpenDate = newEvent.RegistrationBegins,
+                                                Address = new Address
+                                                              {
+                                                                  StreetAddress =
+                                                                      Server.HtmlEncode(newEvent.StreetAddress),
+                                                                  StreetAddress2 =
+                                                                      Server.HtmlEncode(newEvent.StreetAddress2 ??
+                                                                                        string.Empty),
+                                                                  City = Server.HtmlEncode(newEvent.City),
+                                                                  PostalCode = Server.HtmlEncode(newEvent.PostalCode),
+                                                                  State = Server.HtmlEncode(newEvent.State)
+                                                              }
+                                            };
 
-                return RedirectToAction("Index");
+                    var user = _eventService.Repository.GetUserByName(HttpContext.User.Identity.Name);
+
+                    insertedEvent.AddAttendee(user);
+                    insertedEvent.AddOrganizer(user);
+
+                    var result = _eventService.Repository.CreateEvent(insertedEvent);
+
+                    if(result)
+                    {
+                        return RedirectToAction("Details", new {id = insertedEvent.EventId});
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to add event to calendar.");
+                        return View(newEvent);
+                    }
+                }
+
+                ModelState.AddModelError("", "Invalid event - please correct errors before re-submitting.");
+                return View(newEvent);
             }
             catch
             {
+                ModelState.AddModelError("", "Unable to add event to calendar.");
                 return View();
             }
         }
         
-        //
-        // GET: /Event/Edit/5
- 
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+        
 
-        //
-        // POST: /Event/Edit/5
+        #region Validation Actions
 
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public JsonResult EventNameAvailable(string eventname)
         {
-            try
+            var existingEvent = _eventService.GetEvent(eventname);
+            if (existingEvent == null)
+                return Json(true, JsonRequestBehavior.AllowGet);
+            else
             {
-                // TODO: Add update logic here
- 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
+                return Json(string.Format("An event already exists with name {0}", eventname),
+                            JsonRequestBehavior.AllowGet);
             }
         }
 
-        //
-        // GET: /Event/Delete/5
- 
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        //
-        // POST: /Event/Delete/5
-
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
- 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        #endregion
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using PeerLearn.Data;
 
 namespace PeerLearn.Web.Models
@@ -12,11 +13,13 @@ namespace PeerLearn.Web.Models
         public int EventId { get; set; }
         [Required]
         [StringLength(DataConstants.EventNameLength)]
+        [Remote("EventNameAvailable", "Event")]
         [Display(Name="Event Name")]
         public string EventName { get; set; }
 
         [Required]
         [Display(Name="Event Description")]
+        [DataType(DataType.MultilineText)]
         public string EventDescription { get; set; }
 
         [Required]

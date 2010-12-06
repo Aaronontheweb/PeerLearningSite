@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NHibernate;
+using NHibernate.Criterion;
 using PeerLearn.Data.Entities;
 
 namespace PeerLearn.Data
@@ -29,9 +30,12 @@ namespace PeerLearn.Data
                     user = session.CreateCriteria(typeof (User))
                         .Add(NHibernate.Criterion.Restrictions.Eq("UserId", id))
                         .UniqueResult<User>();
-                    NHibernateUtil.Initialize(user.EventsOrganized);
-                    NHibernateUtil.Initialize(user.EventsPresented);
-                    NHibernateUtil.Initialize(user.EventsAttended);
+                    if (user != null)
+                    {
+                        NHibernateUtil.Initialize(user.EventsOrganized);
+                        NHibernateUtil.Initialize(user.EventsPresented);
+                        NHibernateUtil.Initialize(user.EventsAttended);
+                    }
                 }
             }
 
@@ -49,6 +53,12 @@ namespace PeerLearn.Data
                     user = session.CreateCriteria(typeof(User))
                         .Add(NHibernate.Criterion.Restrictions.Eq("UserName", username))
                         .UniqueResult<User>();
+                    if (user != null)
+                    {
+                        NHibernateUtil.Initialize(user.EventsOrganized);
+                        NHibernateUtil.Initialize(user.EventsPresented);
+                        NHibernateUtil.Initialize(user.EventsAttended);
+                    }
                 }
             }
 
@@ -66,6 +76,13 @@ namespace PeerLearn.Data
                     user = session.CreateCriteria(typeof(User))
                         .Add(NHibernate.Criterion.Restrictions.Eq("Email", email))
                         .UniqueResult<User>();
+
+                    if(user != null)
+                    {
+                        NHibernateUtil.Initialize(user.EventsOrganized);
+                        NHibernateUtil.Initialize(user.EventsPresented);
+                        NHibernateUtil.Initialize(user.EventsAttended);
+                    }
                 }
             }
 
@@ -86,7 +103,6 @@ namespace PeerLearn.Data
                     }
                     catch(Exception ex)
                     {
-                        var debug = ex;
                         return false;
                     }
                 }
@@ -144,47 +160,100 @@ namespace PeerLearn.Data
                     selectedEvent = session.CreateCriteria(typeof(Event))
                         .Add(NHibernate.Criterion.Restrictions.Eq("EventId", id))
                         .UniqueResult<Event>();
-                    NHibernateUtil.Initialize(selectedEvent.Organizers);
-                    NHibernateUtil.Initialize(selectedEvent.Speakers);
-                    NHibernateUtil.Initialize(selectedEvent.Attendees);
+
+                    if (selectedEvent != null)
+                    {
+                        NHibernateUtil.Initialize(selectedEvent.Organizers);
+                        NHibernateUtil.Initialize(selectedEvent.Speakers);
+                        NHibernateUtil.Initialize(selectedEvent.Attendees);
+                    }
                 }
             }
 
             return selectedEvent;
         }
 
-        public void CreateEvent(Event newEvent)
+        public Event GetEventByName(string eventName)
+        {
+            Event selectedEvent = null;
+
+            using (var session = _factory.OpenSession())
+            {
+                using (var transaction = session.BeginTransaction())
+                {
+                    selectedEvent = session.CreateCriteria(typeof(Event))
+                        .Add(NHibernate.Criterion.Restrictions.Like("EventName", eventName, MatchMode.Exact))
+                        .UniqueResult<Event>();
+
+                    if(selectedEvent != null)
+                    {
+                        NHibernateUtil.Initialize(selectedEvent.Organizers);
+                        NHibernateUtil.Initialize(selectedEvent.Speakers);
+                        NHibernateUtil.Initialize(selectedEvent.Attendees);
+                    }
+                    
+                }
+            }
+
+            return selectedEvent;
+        }
+
+        public bool CreateEvent(Event newEvent)
         {
             using (var session = _factory.OpenSession())
             {
                 using (var transaction = session.BeginTransaction())
                 {
-                    session.Save(newEvent);
-                    transaction.Commit();
+                    try
+                    {
+                        session.Save(newEvent);
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
                 }
             }
         }
 
-        public void UpdateEvent(Event updatedEvent)
+        public bool UpdateEvent(Event updatedEvent)
         {
             using (var session = _factory.OpenSession())
             {
                 using (var transaction = session.BeginTransaction())
                 {
-                    session.Update(updatedEvent);
-                    transaction.Commit();
+                    try
+                    {
+                        session.Update(updatedEvent);
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
                 }
             }
         }
 
-        public void DeleteEvent(Event deletedEvent)
+        public bool DeleteEvent(Event deletedEvent)
         {
             using (var session = _factory.OpenSession())
             {
                 using (var transaction = session.BeginTransaction())
                 {
-                    session.Delete(deletedEvent);
-                    transaction.Commit();
+                    try
+                    {
+                        session.Delete(deletedEvent);
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
                 }
             }
         }

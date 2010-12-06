@@ -25,6 +25,9 @@ namespace PeerLearn.Data.Entities
             RegistrationOpenDate = DateTime.Now;
             EventBeginDate = RegistrationOpenDate + new TimeSpan(1, 0, 0, 0);
             EventEndDate = EventBeginDate + new TimeSpan(3, 0, 0);
+            Speakers = new List<User>();
+            Organizers = new List<User>();
+            Attendees = new List<User>();
         }
 
         public virtual void AddAttendee(User attendee)
